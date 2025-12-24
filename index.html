@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Safe Place</title>
+<style>
+/* RESET */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #020617;
+  overflow: hidden;
+}
+
+/* ================= LOGIN ================= */
+#login {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(
+    circle at top,
+    #e0f2fe 0%,
+    #bae6fd 40%,
+    #0f172a 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  overflow: hidden;
+}
+
+.login-banner {
+  position: absolute;
+  top: 60px;
+  left: 0;
+  width: 100%;
+  height: 220px;
+  background: url("shikhar banner.png") center top / contain no-repeat;
+  z-index: 1;
+  pointer-events: none;
+
+  filter:
+    drop-shadow(0 0 12px rgba(125,211,252,0.9))
+    drop-shadow(0 0 28px rgba(56,189,248,0.85))
+    drop-shadow(0 18px 40px rgba(56,189,248,0.6));
+}
+
+.login-window {
+  width: 420px;
+  padding: 34px;
+  border-radius: 18px;
+
+  background: linear-gradient(
+    180deg,
+    rgba(224,242,254,0.55),
+    rgba(186,230,253,0.45)
+  );
+
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+
+  box-shadow:
+    0 25px 50px rgba(15,23,42,0.25),
+    0 0 45px rgba(56,189,248,0.6);
+
+  border: 1px solid rgba(255,255,255,0.45);
+
+  color: #0f172a;
+  position: relative;
+  z-index: 2;
+}
+
+
+.login-window h2 {
+  text-align: center;
+  margin-bottom: 22px;
+  color: #0284c7;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+}
+
+.login-window input {
+  width: 100%;
+  padding: 13px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(2,132,199,0.25);
+  outline: none;
+  margin-bottom: 12px;
+  background: rgba(255,255,255,0.85);
+  color: #0f172a;
+  font-size: 14px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.6);
+}
+
+.login-window input::placeholder {
+  color: #64748b;
+}
+
+.login-window button {
+  width: 100%;
+  padding: 13px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(
+    180deg,
+    #7dd3fc 0%,
+    #38bdf8 100%
+  );
+  font-weight: 600;
+  color: #0f172a;
+  cursor: pointer;
+  box-shadow:
+    0 6px 14px rgba(56,189,248,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.6);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.login-window button:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 10px 24px rgba(56,189,248,0.65),
+    inset 0 1px 0 rgba(255,255,255,0.7);
+}
+
+.login-window button:active {
+  transform: translateY(0);
+}
+
+
+.safe-text {
+  margin-top: 18px;
+  text-align: center;
+  font-family: cursive;
+  color: #3274ca;
+  line-height: 1.5;
+
+  text-shadow:
+    0 0 6px rgba(125,211,252,0.9),
+    0 0 14px rgba(56,189,248,0.9),
+    0 0 28px rgba(56,189,248,0.7);
+}
+/* hearts */
+.heart {
+  position: absolute;
+  bottom: -20px;
+  color: #7dd3fc;
+  animation: float 6s linear infinite;
+}
+@keyframes float {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(-600px); opacity: 0; }
+}
+
+/* ================= MENU ================= */
+#menu {
+  display: none;
+  width: 100vw;
+  height: 100vh;
+  background: url("background.jpg") center/cover no-repeat;
+  position: relative;
+}
+
+/* clickable items */
+.item {
+  position: absolute;
+  cursor: pointer;
+  transition: transform .2s;
+}
+.item:hover { transform: scale(1.05); }
+
+#speaker { top: 45%; left: 50%; transform: translate(-50%, -50%); }
+#cake {bottom: 120px;right: 220px;width: 350px;}
+#nitendo { bottom: 100px; left: 50%; transform: translateX(-50%);width: 200px; }
+#letter { top: 50%; left: 35%;width: 200px; }
+
+/* ================= WINDOWS ================= */
+.window {
+  position: fixed;
+  inset: 0;
+  background: rgba(2,6,23,0.8);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.window-content {
+  position: relative;
+  background: #020617;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 0 30px #38bdf8;
+}
+
+.close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  cursor: pointer;
+  color: #7dd3fc;
+  font-size: 20px;
+}
+
+/* ================= LETTER ================= */
+.letter {
+  width: 760px;
+  height: 520px;
+  background: url("page.jpg") center/cover no-repeat;
+  padding: 60px;
+  font-size: 18px;
+  font-family: cursive;
+  color: #020617;
+  line-height: 1.6;
+}
+
+/* ================= CAKE ================= */
+.cake-img {
+  width: 780px;
+}
+
+/* ================= GAME ================= */
+canvas {
+  background: #020617;
+  border: 2px solid #38bdf8;
+}
+
+@keyframes pulse {
+  0% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.06); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+.pulsing {
+  animation: pulse 1.2s infinite ease-in-out;
+}
+
+/* TELEFONE */
+#phone {
+  position: absolute;
+  top: 45%;
+  left: 35%;               /* à esquerda da speaker */
+  transform: translate(-50%, -50%);
+  width: 160px;            /* MAIOR */
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+/* vibração no hover */
+#phone:hover {
+  animation: vibrate 0.3s linear infinite;
+}
+
+/* animação de vibração */
+@keyframes vibrate {
+  0%   { transform: translate(-50%, -50%) rotate(0deg); }
+  25%  { transform: translate(-48%, -50%) rotate(-2deg); }
+  50%  { transform: translate(-52%, -50%) rotate(2deg); }
+  75%  { transform: translate(-48%, -50%) rotate(-2deg); }
+  100% { transform: translate(-50%, -50%) rotate(0deg); }
+}
+
+/* MODAL */
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  position: relative;
+  background: #fff;
+  padding: 16px;
+  border-radius: 14px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+}
+
+.modal-content img {
+  max-width: 300px;
+  border-radius: 10px;
+}
+
+/* BOTÃO FECHAR */
+.close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  color: #444;
+}
+
+
+
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div id="login">
+  <div class="login-banner"></div>
+  <div class="login-window">
+    <h2>What united us?</h2>
+    <input id="password" type="text" placeholder="password…" />
+    <button onclick="enter()">Enter</button>
+    <div class="safe-text" id="safeMessage" style="display:none;">
+    it's okay to come back. some days are worth reliving.<br>
+    you can always come back home,<br>
+    this will always be our safe place.
+    </div>
+  </div>
+</div>
+
+<!-- MENU -->
+<div id="menu">
+  <img src="speaker.jpg" id="speaker" class="item" width="120">
+  <img src="cake.jpg" id="cake" class="item" width="120">
+  <img src="nitendo.jpg" id="nitendo" class="item" width="160">
+  <img src="letter.jpg" id="letter" class="item" width="120">
+  <img src="phone.png" id="phone" class="item" width="100">
+</div>
+
+<!-- LETTER WINDOW -->
+<div class="window" id="letterWin">
+  <div class="window-content letter">
+    <div class="close" onclick="closeWin('letterWin')">✕</div>
+    <p>
+      Happy Birthday, Shik. May you be filled with joy and blessings today. I guess you were born on the same day as Christmas, because you’re such a blessing in everyone’s life. I’m happy to share my life with you since the day we met. You’re so special to me that it’s even hard to put it into words. I wish I were there so I could give you a tight hug. I hope we stay friends forever. You’re my best friend, and sometimes I even forget we’re long-distance, because I always feel you so close to my everyday life.<br>
+      Nothing in this world can make me stay away from you. Nothing can come between us. I always talk about you proudly to everyone, because yes, I am proud to have you in my life.<br>
+      You don’t need to be perfect. You never need to be excellent. Your mistakes and your flaws make you unique, and I wouldn’t change a thing. No matter how much we disagree or how much we hurt each other, I know we’re going to be fine, even at our worst. Try to smile more today. The best gift I have ever received was being born twenty-seven years ago today.<br>I love you forever.
+    </p>
+  </div>
+</div>
+
+<!-- CAKE WINDOW -->
+<div class="window" id="cakeWin">
+  <div class="window-content">
+    <div class="close" onclick="closeWin('cakeWin')">✕</div>
+    <img src="shikhar_birthday.jpg" class="cake-img">
+  </div>
+</div>
+
+<!-- GAME WINDOW -->
+<div class="window" id="gameWin">
+  <div class="window-content">
+    <div class="close" onclick="closeWin('gameWin')">✕</div>
+    <canvas id="game" width="300" height="300"></canvas>
+  </div>
+</div>
+
+<!-- PHONE WINDOW -->
+<div class="window" id="phoneWin">
+  <div class="window-content">
+    <div class="close" onclick="closeWin('phoneWin')">✕</div>
+    <img src="us.png" style="max-width: 400px; border-radius: 12px;">
+  </div>
+</div>
+
+<!-- AUDIO -->
+<audio id="music"></audio>
+
+<script>
+/* LOGIN */
+function enter() {
+  if (document.getElementById("password").value.toLowerCase() === "zack knight") {
+
+    // marca que ele já entrou ao menos uma vez
+    localStorage.setItem("hasEnteredSafePlace", "true");
+
+    document.getElementById("login").style.display = "none";
+    document.getElementById("menu").style.display = "block";
+  }
+}
+
+
+/* HEARTS */
+setInterval(() => {
+  const h = document.createElement("div");
+  h.innerHTML = "♥";
+  h.className = "heart";
+  h.style.left = Math.random() * 100 + "%";
+  h.style.fontSize = Math.random() * 20 + 10 + "px";
+  document.getElementById("login").appendChild(h);
+  setTimeout(() => h.remove(), 6000);
+}, 500);
+
+/* MUSIC */
+const tracks = ["musica1.mp3","musica2.mp3","musica3.mp3"];
+let index = 0;
+const speakerEl = document.getElementById("speaker");
+const audio = document.getElementById("music");
+
+speakerEl.onclick = () => {
+  audio.src = tracks[index];
+  audio.play();
+  speakerEl.classList.add("pulsing");
+  index = (index + 1) % tracks.length;
+};
+
+audio.onended = () => {
+  speakerEl.classList.remove("pulsing");
+};
+
+
+/* WINDOWS */
+letter.onclick = () => openWin("letterWin");
+cake.onclick = () => openWin("cakeWin");
+nitendo.onclick = () => {
+  openWin("gameWin");
+  startGame();
+};
+
+function openWin(id){ document.getElementById(id).style.display="flex"; }
+function closeWin(id) {
+  document.getElementById(id).style.display = "none";
+
+  // se fechar o jogo, limpa tudo
+  if (id === "gameWin" && gameInterval) {
+    clearInterval(gameInterval);
+    gameInterval = null;
+
+    const c = document.getElementById("game");
+    const ctx = c.getContext("2d");
+    ctx.clearRect(0, 0, c.width, c.height);
+  }
+}
+
+
+let gameInterval = null;
+let snake, food, dx, dy;
+
+/* SNAKE GAME */
+function startGame() {
+  const c = document.getElementById("game");
+  const ctx = c.getContext("2d");
+
+  // limpa qualquer jogo antigo
+  if (gameInterval) {
+    clearInterval(gameInterval);
+    gameInterval = null;
+  }
+
+  // limpa o canvas
+  ctx.clearRect(0, 0, c.width, c.height);
+
+  // estado inicial
+  snake = [{ x: 150, y: 150 }];
+  food = {
+    x: Math.floor(Math.random() * 30) * 10,
+    y: Math.floor(Math.random() * 30) * 10
+  };
+  dx = 10;
+  dy = 0;
+
+  document.onkeydown = e => {
+    if (e.key === "ArrowUp" && dy === 0) { dx = 0; dy = -10; }
+    if (e.key === "ArrowDown" && dy === 0) { dx = 0; dy = 10; }
+    if (e.key === "ArrowLeft" && dx === 0) { dx = -10; dy = 0; }
+    if (e.key === "ArrowRight" && dx === 0) { dx = 10; dy = 0; }
+  };
+
+  gameInterval = setInterval(() => {
+    ctx.clearRect(0, 0, c.width, c.height);
+
+    const head = { x: snake[0].x + dx, y: snake[0].y + dy };
+
+    // wrap nas bordas (opcional, mas elegante)
+    head.x = (head.x + c.width) % c.width;
+    head.y = (head.y + c.height) % c.height;
+    // colisão com o próprio corpo (GAME OVER)
+    if (isSelfCollision(head, snake)) {
+    clearInterval(gameInterval);
+    gameInterval = null;
+
+    ctx.fillStyle = "#f87171";
+    ctx.font = "28px Segoe UI";
+    ctx.textAlign = "center";
+    ctx.fillText("GAME OVER", c.width / 2, c.height / 2);
+
+    return;
+    }
+
+    snake.unshift(head);
+
+    if (head.x === food.x && head.y === food.y) {
+      food = {
+        x: Math.floor(Math.random() * 30) * 10,
+        y: Math.floor(Math.random() * 30) * 10
+      };
+    } else {
+      snake.pop();
+    }
+
+    // desenha cobra
+    ctx.fillStyle = "#38bdf8";
+    snake.forEach(p => ctx.fillRect(p.x, p.y, 10, 10));
+
+    // desenha comida
+    ctx.fillStyle = "#facc15";
+    ctx.fillRect(food.x, food.y, 10, 10);
+  }, 120);
+}
+
+function isSelfCollision(head, body) {
+  return body.some(
+    segment => segment.x === head.x && segment.y === head.y
+  );
+}
+
+
+// mostra a mensagem só se NÃO for a primeira vez
+window.addEventListener("load", () => {
+  if (localStorage.getItem("hasEnteredSafePlace")) {
+    document.getElementById("safeMessage").style.display = "block";
+  }
+});
+
+document.getElementById("phone").onclick = () => openWin("phoneWin");
+document.getElementById("letter").onclick = () => openWin("letterWin");
+document.getElementById("cake").onclick = () => openWin("cakeWin");
+
+function openWin(id) {
+  document.getElementById(id).style.display = "flex";
+}
+
+function closeWin(id) {
+  document.getElementById(id).style.display = "none";
+}
+
+
+</script>
+
+</body>
+</html>
